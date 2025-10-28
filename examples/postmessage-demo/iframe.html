@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>PostMessageCommAPI 演示 - Iframe</title>
+  <style>
+    body { font-family: sans-serif; }
+    .log { border: 1px solid #ccc; height: 160px; overflow: auto; padding: 8px; }
+  </style>
+</head>
+<body>
+  <h1>Iframe 页面</h1>
+  <div>
+    <input id="msg" placeholder="输入消息" />
+    <button id="send">发送到 Parent</button>
+  </div>
+  <div class="log" id="log"></div>
+
+  <script>
+    const log = (text) => {
+      const el = document.getElementById('log');
+      el.innerHTML += `<div>${new Date().toLocaleTimeString()} - ${text}</div>`;
+      el.scrollTop = el.scrollHeight;
+    };
+
+    window.addEventListener('message', (event) => {
+      // 在实际项目中请校验 event.origin
+      log(`收到来自 Parent 的消息: ${JSON.stringify(event.data)}`);
+    });
+
+    document.getElementById('send').addEventListener('click', () => {
+      const text = document.getElementById('msg').value;
+      window.parent.postMessage({ type: 'chat', content: text }, '*');
+      log(`向 Parent 发送消息: ${text}`);
+    });
+  </script>
+</body>
+</html>
