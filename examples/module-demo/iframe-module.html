@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iframe - PostMessageCommAPI 模块化导入示例</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .message-container {
+            height: 150px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: white;
+        }
+        .message {
+            margin-bottom: 8px;
+            padding: 8px;
+            border-radius: 4px;
+        }
+        .message.received {
+            background-color: #e3f2fd;
+        }
+        .message.sent {
+            background-color: #e8f5e9;
+            text-align: right;
+        }
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+        input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 8px 16px;
+            background-color: #2196f3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0b7dda;
+        }
+    </style>
+</head>
+<body>
+    <h2>iframe 页面</h2>
+    <div class="message-container" id="messageLog"></div>
+    
+    <div class="input-group">
+        <input type="text" id="messageInput" placeholder="输入消息...">
+        <button id="sendButton">发送到父页面</button>
+    </div>
+
+    <script>
+        // 日志函数
+        function logMessage(sender, content, type = '') {
+            const messageLog = document.getElementById('messageLog');
+            const messageElement = document.createElement('div');
+            messageElement.className = `message ${type}`;
+            messageElement.textContent = `${sender}: ${content}`;
+            messageLog.appendChild(messageElement);
+            messageLog.scrollTop = messageLog.scrollHeight;
+        }
+
+        // 模拟 SDK 导入
+        // 注意：实际使用时应替换为真实的 SDK 导入
+        window.addEventListener('message', function(event) {
+            if (event.data && event.data.type === 'demo-message') {
+                logMessage(event.data.from, event.data.content, 'received');
+            }
+        });
+
+        document.getElementById('sendButton').addEventListener('click', function() {
+            const content = document.getElementById('messageInput').value;
+            if (content.trim()) {
+                window.parent.postMessage({
+                    type: 'demo-message',
+                    from: 'iframe页面',
+                    content: content
+                }, '*');
+                
+                logMessage('我', content, 'sent');
+                document.getElementById('messageInput').value = '';
+            }
+        });
+
+        // 页面加载完成后发送一条系统消息
+        window.onload = function() {
+            logMessage('系统', 'iframe 页面已加载，可以开始通信', 'system');
+        };
+    </script>
+</body>
+</html>
