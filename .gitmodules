@@ -1,0 +1,6 @@
+[submodule "encrypted-chat-sdk"]
+	path = encrypted-chat-sdk
+	url = https://github.com/jinyang756/encrypted-chat-sdk.git
+[submodule "chat-room"]
+	path = chat-room
+	url = https://github.com/jinyang756/chat-room.git
